@@ -4,7 +4,7 @@ import {
   RefreshCw, Loader2, Check, WifiOff, Link2, User, Shield, Map,
   X, ChevronRight, Target, UserCircle, Compass, HelpCircle, CircleAlert, Bug, Search,
   Grid3x3, Plus, Sparkles, Vote, ScrollText, Layers, NotebookPen, Package, Bot,
-  PanelLeft, PanelBottom, Hexagon, Pencil, MessageSquare,
+  PanelLeft, PanelBottom, Hexagon, Pencil, MessageSquare,Copy
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -142,6 +142,18 @@ export function Dashboard({ userName = "Neighbor", onNavigate, onLogout }: Dashb
     setSearchQuery('');
     onNavigate('discover');
   }
+
+  // Copy the current hub Url to the clipboard
+ const [urlCopied, setUrlCopied] = useState(false);
+ const handleCopyHubUrl = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.origin);
+    setUrlCopied(true);
+    setTimeout(() => setUrlCopied(false), 2000);
+  } catch (err) {
+    console.error('Failed to copy hub URL:', err);
+  }
+};
 
   // Desktop nav layout: bottom dock (default) or left sidebar
   const [desktopNavLayout, setDesktopNavLayout] = useState<'dock' | 'sidebar'>(() => {
@@ -508,6 +520,20 @@ export function Dashboard({ userName = "Neighbor", onNavigate, onLogout }: Dashb
           <Hexagon className="w-4 h-4 text-purple-400 shrink-0" fill="currentColor" strokeWidth={0} />
           <span className="text-sm font-semibold text-slate-100">{nodeName}</span>
         </button>
+
+        <button
+  onClick={(e) => { e.stopPropagation(); handleCopyHubUrl(); }}
+  className="flex items-center justify-center w-6 h-6 rounded-md hover:bg-white/10 transition-colors shrink-0"
+  title="Copy hub link"
+  aria-label="Copy hub link"
+>
+  {urlCopied ? (
+    <Check className="w-3.5 h-3.5 text-green-400" />
+  ) : (
+    <Copy className="w-3.5 h-3.5 text-slate-400" />
+  )}
+</button>
+
         <form onSubmit={handleSearchSubmit} className="flex-1 flex justify-center min-w-0 px-2">
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500 pointer-events-none" />
